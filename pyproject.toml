@@ -16,7 +16,7 @@ pandas = "^2.2.0"
 
 
 [tool.poetry.group.gcs.dependencies]
-google-cloud-storage = "^2.1.0"
+google-cloud-storage = ">=2.1,<4.0"
 google-api-python-client = "^2.119.0"
 
 [tool.poetry.group.s3.dependencies]
