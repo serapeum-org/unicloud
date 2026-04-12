@@ -1,37 +1,37 @@
-name: pypi-deployment
+name: Tests - Suite
 
-on: [push]
+permissions:
+  contents: read
+  id-token: write
+
+
+on:
+  push:
+    branches: [main]
+  pull_request:
 
 jobs:
-  Main-Package:
+  main-package:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.12"]
+        python-version: ["3.11", "3.12", "3.13"]
     env:
       OS: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: serapeum-org/github-actions/actions/python-setup/uv@uv/v1
         with:
           python-version: ${{ matrix.python-version }}
-          architecture: x64
-
-      - name: Install poetry
-        run: |
-          pip install poetry
-
-      - name: Configure Poetry
-        run: |
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Install dependencies
-        run: |
-            poetry --version
-            poetry install
+          install-groups: "groups: dev"
+          install-extras: "extras: all"
+          verify-lock: true
 
       - name: Set up AWS credentials
         env:
@@ -49,13 +49,12 @@ jobs:
         run: |
           echo "$GCP_SA_KEY" > gcp-key.json
           echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/gcp-key.json" >> $GITHUB_ENV
-          # verify the credentials
           gcloud auth activate-service-account --key-file=gcp-key.json
           gcloud auth list --quiet
 
       - name: Run Tests
         run: |
-          poetry run pytest -sv --cov=src/unicloud --cov-report=xml
+          uv run pytest -vvv --cov=src/unicloud --cov-report=xml --junitxml=junit.xml -o junit_family=legacy
 
       - name: Upload coverage reports to Codecov with GitHub Action
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5

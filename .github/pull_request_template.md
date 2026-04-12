@@ -5,6 +5,7 @@
 - List any dependencies that are required for this change.
 
 
+# Issues
 - Fixes # (issue)
 ## Type of change
 
@@ -14,21 +15,27 @@ Check relevant points.
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 - [ ] This change requires a documentation update
+- [ ] Dev changes (CI/pyproject.toml/docs/examples/testing)
+
+## Cloud provider scope
+- [ ] AWS S3
+- [ ] Google Cloud Storage (GCS)
+- [ ] Both / abstraction layer
+- [ ] N/A (tooling only)
 
 # How Has This Been Tested?
 
 - Please describe the tests that you ran to verify your changes.
 - Provide instructions so we can reproduce.
-- Please also list any relevant details for your test configuration
+- Please also list any relevant details for your test configuration (real bucket vs `moto` / mock, region, auth method).
 
 - [ ] Test A
 - [ ] Test B
 
 # Checklist:
 
-- [ ] updated version number in setup.py/pyproject.toml.
-- [ ] added changes to History.rst.
-- [ ] updated the latest version in README file.
-- [ ] I have added tests that prove my fix is effective or that my feature works.
-- [ ] New and existing unit tests pass locally with my changes.
-- [ ] documentation are updated.
+- [ ] updated version number in pyproject.toml
+- [ ] added changes to HISTORY.rst
+- [ ] updated the latest version in README file
+- [ ] I have added tests that prove my fix is effective or that my feature works
+- [ ] New and existing unit tests pass locally with my changes
