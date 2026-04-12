@@ -2,16 +2,16 @@
 [![Python Versions](https://img.shields.io/pypi/pyversions/unicloud.png)](https://img.shields.io/pypi/pyversions/unicloud)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Serapieum-of-alex/unicloud.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Serapieum-of-alex/unicloud/context:python)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/serapeum-org/unicloud.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/serapeum-org/unicloud/context:python)
 
-![GitHub last commit](https://img.shields.io/github/last-commit/Serapieum-of-alex/unicloud)
-![GitHub forks](https://img.shields.io/github/forks/Serapieum-of-alex/unicloud?style=social)
-![GitHub Repo stars](https://img.shields.io/github/stars/Serapieum-of-alex/unicloud?style=social)
-[![codecov](https://codecov.io/gh/Serapieum-of-alex/unicloud/branch/main/graph/badge.svg?token=g0DV4dCa8N)](https://codecov.io/gh/Serapieum-of-alex/unicloud)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/5e3aa4d0acc843d1a91caf33545ecf03)](https://www.codacy.com/gh/Serapieum-of-alex/unicloud/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Serapieum-of-alex/unicloud&amp;utm_campaign=Badge_Grade)
+![GitHub last commit](https://img.shields.io/github/last-commit/serapeum-org/unicloud)
+![GitHub forks](https://img.shields.io/github/forks/serapeum-org/unicloud?style=social)
+![GitHub Repo stars](https://img.shields.io/github/stars/serapeum-org/unicloud?style=social)
+[![codecov](https://codecov.io/gh/serapeum-org/unicloud/branch/main/graph/badge.svg?token=g0DV4dCa8N)](https://codecov.io/gh/serapeum-org/unicloud)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/5e3aa4d0acc843d1a91caf33545ecf03)](https://www.codacy.com/gh/serapeum-org/unicloud/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=serapeum-org/unicloud&amp;utm_campaign=Badge_Grade)
 
-![GitHub commits since latest release (by SemVer including pre-releases)](https://img.shields.io/github/commits-since/Serapieum-of-alex/unicloud/0.5.0?include_prereleases&style=plastic)
-![GitHub last commit](https://img.shields.io/github/last-commit/Serapieum-of-alex/unicloud)
+![GitHub commits since latest release (by SemVer including pre-releases)](https://img.shields.io/github/commits-since/serapeum-org/unicloud/0.5.0?include_prereleases&style=plastic)
+![GitHub last commit](https://img.shields.io/github/last-commit/serapeum-org/unicloud)
 
 Current release info
 ====================
@@ -71,7 +71,7 @@ conda search unicloud --channel conda-forge
 to install the last development to time, you can install the library from GitHub
 
 ```
-pip install git+https://github.com/Serapieum-of-alex/unicloud
+pip install git+https://github.com/serapeum-org/unicloud
 ```
 
 ## pip
