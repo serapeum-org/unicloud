@@ -1,4 +1,4 @@
-[![Documentation Status](https://readthedocs.org/projects/unicloud/badge/?version=latest)](https://unicloud.readthedocs.io/en/latest/?badge=latest)
+[![Deploy MkDocs](https://github.com/serapeum-org/unicloud/actions/workflows/github-pages-mkdocs.yml/badge.svg)](https://serapeum-org.github.io/unicloud/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/unicloud.png)](https://img.shields.io/pypi/pyversions/unicloud)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
@@ -49,7 +49,7 @@ cloud storage capabilities into Python applications.
 
 Documentation
 =============
-- Full documentation is available at [Read the Docs](https://unicloud.readthedocs.io/en/latest/?badge=latest)
+- Full documentation is available at [GitHub Pages](https://serapeum-org.github.io/unicloud/)
 
 Installing unicloud
 ===================
@@ -107,4 +107,4 @@ Quick start
   >>> import unicloud
 ```
 
-[other code samples](https://unicloud.readthedocs.io/en/latest/?badge=latest)
+[other code samples](https://serapeum-org.github.io/unicloud/)

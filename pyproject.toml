@@ -81,7 +81,7 @@ docs = [
 
 [project.urls]
 Homepage = "https://github.com/serapeum-org/unicloud"
-Documentation = "https://unicloud.readthedocs.io/en/latest/"
+Documentation = "https://serapeum-org.github.io/unicloud/"
 Repository = "https://github.com/serapeum-org/unicloud"
 
 
