@@ -1094,7 +1094,12 @@
 
     <div class="doc doc-contents first">
 
-        <p>This module contains the secret manager for the unicloud package.</p>
+        <p>Small helpers for moving credential payloads through environment variables.</p>
+<p>Google Cloud service-account JSON files do not round-trip cleanly through most shells or CI secret
+stores, so unicloud ships :func:<code>encode</code> and :func:<code>decode</code> — a complementary base64 pair that lets
+you stash the full JSON inside a single environment variable (commonly <code>SERVICE_KEY_CONTENT</code>, which
+:class:<code>unicloud.google_cloud.gcs.GCS</code> reads out of <code>os.environ</code>) and decode it back into a dict
+at runtime.</p>
 
 
 
@@ -1127,10 +1132,9 @@
 
     <div class="doc doc-contents ">
 
-        <p>encode.</p>
-<div class="highlight"><pre><span></span><code>encode the secret file to base64 string to be used in the environment variable.
-If the path is True, the secret_file is a path to the service account file.
-</code></pre></div>
+        <p>Encode a service-account payload to a base64 bytestring.</p>
+<p>Accepts three equivalent inputs so you can produce the encoded value from whatever form of the
+service-account JSON you have handy: a file path on disk, an in-memory <code>dict</code>, or a JSON string.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1153,8 +1157,12 @@ If the path is True, the secret_file is a path to the service account file.
             </td>
             <td>
               <div class="doc-md-description">
-                <p>the secret_file can be the path to the service account file, a JSON string representing the content of the
-service account file, or a dictionary representing the service account content.</p>
+                <p>One of:</p>
+<ul>
+<li>a string path to a service-account JSON file on disk,</li>
+<li>a <code>dict</code> that already contains the parsed service-account content, or</li>
+<li>a JSON string containing the same content.</li>
+</ul>
               </div>
             </td>
             <td>
@@ -1169,18 +1177,18 @@ service account file, or a dictionary representing the service account content.<
     <table>
       <thead>
         <tr>
-          <th>Type</th>
+<th>Name</th>          <th>Type</th>
           <th>Description</th>
         </tr>
       </thead>
       <tbody>
           <tr class="doc-section-item">
-            <td>
-                  <code>byte string</code>
+<td><code>bytes</code></td>            <td>
+                  <code><span title="bytes">bytes</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                
+                <p>The base64-encoded JSON, suitable for storing in an environment variable.</p>
               </div>
             </td>
           </tr>
@@ -1189,32 +1197,32 @@ service account file, or a dictionary representing the service account content.<
 
 
 <p><span class="doc-section-title">Examples:</span></p>
-    <p>To encode a secret file content:</p>
-<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; secret_file_content = {&quot;type&quot;: &quot;service_account&quot;, &quot;project_id&quot;: &quot;your_project_id&quot;}
-&gt;&gt;&gt; encode(secret_file_content)
-b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogInlvdXJfcHJvamVjdF9pZCJ9&#39;
-</code></pre></div>
-<p>To encode a secret file using its path:</p>
-<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; encode(&quot;examples/data/secret-file.json&quot;) # doctest: +SKIP
-b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdC1pZCIs******&#39;
-</code></pre></div>
-<p>To encode a secret file using a json string representing the content:</p>
-<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; secret_file_json = &#39;{&quot;type&quot;: &quot;service_account&quot;, &quot;project_id&quot;: &quot;your_project_id&quot;}&#39;
-&gt;&gt;&gt; encode(secret_file_json) # doctest: +SKIP
-b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdF9pZCJ9&#39;
-</code></pre></div>
+    <ul>
+<li>Encode an in-memory dict directly:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">secret_file_content</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service_account&quot;</span><span class="p">,</span> <span class="s2">&quot;project_id&quot;</span><span class="p">:</span> <span class="s2">&quot;your_project_id&quot;</span><span class="p">}</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">encode</span><span class="p">(</span><span class="n">secret_file_content</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="sa">b</span><span class="s1">&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogInlvdXJfcHJvamVjdF9pZCJ9&#39;</span>
+</code></pre></div></li>
+<li>Encode from a JSON string with the same content:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">secret_file_json</span> <span class="o">=</span> <span class="s1">&#39;{&quot;type&quot;: &quot;service_account&quot;, &quot;project_id&quot;: &quot;your_project_id&quot;}&#39;</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">encode</span><span class="p">(</span><span class="n">secret_file_json</span><span class="p">)</span>  <span class="c1"># doctest: +SKIP</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="sa">b</span><span class="s1">&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdF9pZCJ9&#39;</span>
+</code></pre></div></li>
+<li>Encode from a file path on disk:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">encode</span><span class="p">(</span><span class="s2">&quot;examples/data/secret-file.json&quot;</span><span class="p">)</span>  <span class="c1"># doctest: +SKIP</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="sa">b</span><span class="s1">&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdC1pZCIs******&#39;</span>
+</code></pre></div></li>
+</ul>
 
+
+<details class="see-also" open>
+  <summary>See Also</summary>
+  <p>decode: Inverse operation that turns the base64 payload back into a <code>dict</code>.</p>
+</details>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/unicloud/utils.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-0-10">10</a></span>
-<span class="normal"><a href="#__codelineno-0-11">11</a></span>
-<span class="normal"><a href="#__codelineno-0-12">12</a></span>
-<span class="normal"><a href="#__codelineno-0-13">13</a></span>
-<span class="normal"><a href="#__codelineno-0-14">14</a></span>
-<span class="normal"><a href="#__codelineno-0-15">15</a></span>
-<span class="normal"><a href="#__codelineno-0-16">16</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-16">16</a></span>
 <span class="normal"><a href="#__codelineno-0-17">17</a></span>
 <span class="normal"><a href="#__codelineno-0-18">18</a></span>
 <span class="normal"><a href="#__codelineno-0-19">19</a></span>
@@ -1255,55 +1263,72 @@ b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvam
 <span class="normal"><a href="#__codelineno-0-54">54</a></span>
 <span class="normal"><a href="#__codelineno-0-55">55</a></span>
 <span class="normal"><a href="#__codelineno-0-56">56</a></span>
-<span class="normal"><a href="#__codelineno-0-57">57</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="n">secret_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;encode.</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11"></a>
-<a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="sd">        encode the secret file to base64 string to be used in the environment variable.</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="sd">        If the path is True, the secret_file is a path to the service account file.</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14"></a>
-<a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="sd">    Parameters</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="sd">    ----------</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="sd">    secret_file: [str]</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="sd">        the secret_file can be the path to the service account file, a JSON string representing the content of the</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="sd">        service account file, or a dictionary representing the service account content.</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">    Returns</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">    -------</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">    byte string</span>
+<span class="normal"><a href="#__codelineno-0-57">57</a></span>
+<span class="normal"><a href="#__codelineno-0-58">58</a></span>
+<span class="normal"><a href="#__codelineno-0-59">59</a></span>
+<span class="normal"><a href="#__codelineno-0-60">60</a></span>
+<span class="normal"><a href="#__codelineno-0-61">61</a></span>
+<span class="normal"><a href="#__codelineno-0-62">62</a></span>
+<span class="normal"><a href="#__codelineno-0-63">63</a></span>
+<span class="normal"><a href="#__codelineno-0-64">64</a></span>
+<span class="normal"><a href="#__codelineno-0-65">65</a></span>
+<span class="normal"><a href="#__codelineno-0-66">66</a></span>
+<span class="normal"><a href="#__codelineno-0-67">67</a></span>
+<span class="normal"><a href="#__codelineno-0-68">68</a></span>
+<span class="normal"><a href="#__codelineno-0-69">69</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="n">secret_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode a service-account payload to a base64 bytestring.</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="sd">    Accepts three equivalent inputs so you can produce the encoded value from whatever form of the</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="sd">    service-account JSON you have handy: a file path on disk, an in-memory ``dict``, or a JSON string.</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">        secret_file: One of:</span>
 <a id="__codelineno-0-24" name="__codelineno-0-24"></a>
-<a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="sd">    Examples</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">    --------</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">    To encode a secret file content:</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="sd">            - a string path to a service-account JSON file on disk,</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">            - a ``dict`` that already contains the parsed service-account content, or</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">            - a JSON string containing the same content.</span>
 <a id="__codelineno-0-28" name="__codelineno-0-28"></a>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">        &gt;&gt;&gt; secret_file_content = {&quot;type&quot;: &quot;service_account&quot;, &quot;project_id&quot;: &quot;your_project_id&quot;}</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">        &gt;&gt;&gt; encode(secret_file_content)</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">        b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogInlvdXJfcHJvamVjdF9pZCJ9&#39;</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">    To encode a secret file using its path:</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">        &gt;&gt;&gt; encode(&quot;examples/data/secret-file.json&quot;) # doctest: +SKIP</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">        b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdC1pZCIs******&#39;</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">    To encode a secret file using a json string representing the content:</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">        &gt;&gt;&gt; secret_file_json = &#39;{&quot;type&quot;: &quot;service_account&quot;, &quot;project_id&quot;: &quot;your_project_id&quot;}&#39;</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">        &gt;&gt;&gt; encode(secret_file_json) # doctest: +SKIP</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">        b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdF9pZCJ9&#39;</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">secret_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">secret_file</span><span class="p">):</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a>        <span class="n">content</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">secret_file</span><span class="p">))</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">secret_file</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>        <span class="c1"># Direct dictionary input</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a>        <span class="n">content</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">secret_file</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a>    <span class="k">else</span><span class="p">:</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a>        <span class="c1"># a JSON string representing the content</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a>        <span class="n">content</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">secret_file</span><span class="p">)</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">        bytes: The base64-encoded JSON, suitable for storing in an environment variable.</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">        - Encode an in-memory dict directly:</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">            &gt;&gt;&gt; secret_file_content = {&quot;type&quot;: &quot;service_account&quot;, &quot;project_id&quot;: &quot;your_project_id&quot;}</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">            &gt;&gt;&gt; encode(secret_file_content)</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">            b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogInlvdXJfcHJvamVjdF9pZCJ9&#39;</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">        - Encode from a JSON string with the same content:</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">            &gt;&gt;&gt; secret_file_json = &#39;{&quot;type&quot;: &quot;service_account&quot;, &quot;project_id&quot;: &quot;your_project_id&quot;}&#39;</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">            &gt;&gt;&gt; encode(secret_file_json)  # doctest: +SKIP</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">            b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdF9pZCJ9&#39;</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">        - Encode from a file path on disk:</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">            &gt;&gt;&gt; encode(&quot;examples/data/secret-file.json&quot;)  # doctest: +SKIP</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="sd">            b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdC1pZCIs******&#39;</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a><span class="sd">            ```</span>
 <a id="__codelineno-0-53" name="__codelineno-0-53"></a>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a>    <span class="c1"># serialize first</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a>    <span class="n">dumped_service_account</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a>    <span class="n">encoded_service_account</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">dumped_service_account</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="k">return</span> <span class="n">encoded_service_account</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="sd">    See Also:</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="sd">        decode: Inverse operation that turns the base64 payload back into a ``dict``.</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">secret_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">secret_file</span><span class="p">):</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a>        <span class="n">content</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">secret_file</span><span class="p">))</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">secret_file</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>        <span class="c1"># Direct dictionary input</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>        <span class="n">content</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">secret_file</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>        <span class="c1"># a JSON string representing the content</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>        <span class="n">content</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">secret_file</span><span class="p">)</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>    <span class="c1"># serialize first</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>    <span class="n">dumped_service_account</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>    <span class="n">encoded_service_account</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">dumped_service_account</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>    <span class="k">return</span> <span class="n">encoded_service_account</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1321,9 +1346,10 @@ b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvam
 
     <div class="doc doc-contents ">
 
-        <p>decode.</p>
-<div class="highlight"><pre><span></span><code>decode the base64 string to the original secret file content
-</code></pre></div>
+        <p>Decode a base64 bytestring back into a service-account <code>dict</code>.</p>
+<p>This is the inverse of :func:<code>encode</code> — given the bytes that :func:<code>encode</code> produced (or the
+same bytes pulled out of <code>os.environ["SERVICE_KEY_CONTENT"]</code>), return the parsed JSON as a
+plain dictionary.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1346,7 +1372,7 @@ b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvam
             </td>
             <td>
               <div class="doc-md-description">
-                <p>the content of the secret file encoded with base64</p>
+                <p>The base64-encoded JSON payload, typically read from an environment variable.</p>
               </div>
             </td>
             <td>
@@ -1368,11 +1394,11 @@ b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvam
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code>Dict[str, str]:</code>
+                  <code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="str">str</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>google cloud service account content</p>
+                <p>Dict[str, str]: The decoded service-account content.</p>
               </div>
             </td>
           </tr>
@@ -1381,28 +1407,23 @@ b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvam
 
 
 <p><span class="doc-section-title">Examples:</span></p>
-    <p>To decode a base64 string:</p>
-<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; encoded_content = b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdF9pZCJ9&#39;
-&gt;&gt;&gt; decode(encoded_content)
-{&#39;type&#39;: &#39;service_account&#39;, &#39;project_id&#39;: &#39;example-project_id&#39;}
-</code></pre></div>
+    <ul>
+<li>Round-trip a base64 payload back into a dict:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">encoded_content</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdF9pZCJ9&#39;</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">decode</span><span class="p">(</span><span class="n">encoded_content</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;service_account&#39;</span><span class="p">,</span> <span class="s1">&#39;project_id&#39;</span><span class="p">:</span> <span class="s1">&#39;example-project_id&#39;</span><span class="p">}</span>
+</code></pre></div></li>
+</ul>
 
+
+<details class="see-also" open>
+  <summary>See Also</summary>
+  <p>encode: Produces the base64 bytestring that this function decodes.</p>
+</details>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/unicloud/utils.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-60">60</a></span>
-<span class="normal"><a href="#__codelineno-0-61">61</a></span>
-<span class="normal"><a href="#__codelineno-0-62">62</a></span>
-<span class="normal"><a href="#__codelineno-0-63">63</a></span>
-<span class="normal"><a href="#__codelineno-0-64">64</a></span>
-<span class="normal"><a href="#__codelineno-0-65">65</a></span>
-<span class="normal"><a href="#__codelineno-0-66">66</a></span>
-<span class="normal"><a href="#__codelineno-0-67">67</a></span>
-<span class="normal"><a href="#__codelineno-0-68">68</a></span>
-<span class="normal"><a href="#__codelineno-0-69">69</a></span>
-<span class="normal"><a href="#__codelineno-0-70">70</a></span>
-<span class="normal"><a href="#__codelineno-0-71">71</a></span>
-<span class="normal"><a href="#__codelineno-0-72">72</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-72">72</a></span>
 <span class="normal"><a href="#__codelineno-0-73">73</a></span>
 <span class="normal"><a href="#__codelineno-0-74">74</a></span>
 <span class="normal"><a href="#__codelineno-0-75">75</a></span>
@@ -1414,31 +1435,47 @@ b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvam
 <span class="normal"><a href="#__codelineno-0-81">81</a></span>
 <span class="normal"><a href="#__codelineno-0-82">82</a></span>
 <span class="normal"><a href="#__codelineno-0-83">83</a></span>
-<span class="normal"><a href="#__codelineno-0-84">84</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;decode.</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="sd">        decode the base64 string to the original secret file content</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a><span class="sd">    Parameters</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="sd">    ----------</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a><span class="sd">    string: [bytes]</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a><span class="sd">        the content of the secret file encoded with base64</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a><span class="sd">    Returns</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a><span class="sd">    -------</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a><span class="sd">    Dict[str, str]:</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a><span class="sd">        google cloud service account content</span>
+<span class="normal"><a href="#__codelineno-0-84">84</a></span>
+<span class="normal"><a href="#__codelineno-0-85">85</a></span>
+<span class="normal"><a href="#__codelineno-0-86">86</a></span>
+<span class="normal"><a href="#__codelineno-0-87">87</a></span>
+<span class="normal"><a href="#__codelineno-0-88">88</a></span>
+<span class="normal"><a href="#__codelineno-0-89">89</a></span>
+<span class="normal"><a href="#__codelineno-0-90">90</a></span>
+<span class="normal"><a href="#__codelineno-0-91">91</a></span>
+<span class="normal"><a href="#__codelineno-0-92">92</a></span>
+<span class="normal"><a href="#__codelineno-0-93">93</a></span>
+<span class="normal"><a href="#__codelineno-0-94">94</a></span>
+<span class="normal"><a href="#__codelineno-0-95">95</a></span>
+<span class="normal"><a href="#__codelineno-0-96">96</a></span>
+<span class="normal"><a href="#__codelineno-0-97">97</a></span>
+<span class="normal"><a href="#__codelineno-0-98">98</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-72" name="__codelineno-0-72"></a><span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Decode a base64 bytestring back into a service-account ``dict``.</span>
 <a id="__codelineno-0-74" name="__codelineno-0-74"></a>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a><span class="sd">    Examples</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a><span class="sd">    --------</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="sd">    To decode a base64 string:</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a><span class="sd">    This is the inverse of :func:`encode` — given the bytes that :func:`encode` produced (or the</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a><span class="sd">    same bytes pulled out of ``os.environ[&quot;SERVICE_KEY_CONTENT&quot;]``), return the parsed JSON as a</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="sd">    plain dictionary.</span>
 <a id="__codelineno-0-78" name="__codelineno-0-78"></a>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a><span class="sd">        &gt;&gt;&gt; encoded_content = b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdF9pZCJ9&#39;</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a><span class="sd">        &gt;&gt;&gt; decode(encoded_content)</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a><span class="sd">        {&#39;type&#39;: &#39;service_account&#39;, &#39;project_id&#39;: &#39;example-project_id&#39;}</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="n">service_key</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a>    <span class="k">return</span> <span class="n">service_key</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a><span class="sd">        string: The base64-encoded JSON payload, typically read from an environment variable.</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a><span class="sd">        Dict[str, str]: The decoded service-account content.</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a><span class="sd">        - Round-trip a base64 payload back into a dict:</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a><span class="sd">            ```python</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a><span class="sd">            &gt;&gt;&gt; encoded_content = b&#39;eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdF9pZCJ9&#39;</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a><span class="sd">            &gt;&gt;&gt; decode(encoded_content)</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a><span class="sd">            {&#39;type&#39;: &#39;service_account&#39;, &#39;project_id&#39;: &#39;example-project_id&#39;}</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a><span class="sd">            ```</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a><span class="sd">    See Also:</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a><span class="sd">        encode: Produces the base64 bytestring that this function decodes.</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a>    <span class="n">service_key</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+<a id="__codelineno-0-98" name="__codelineno-0-98"></a>    <span class="k">return</span> <span class="n">service_key</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
