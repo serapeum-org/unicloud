@@ -56,9 +56,15 @@ jobs:
     if: github.event_name == 'release' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     steps:
+    # For a `release` event, github.ref is the tag ref (refs/tags/<version>) — the default checkout
+    # behavior is correct. For a `workflow_run` event (triggered after github-release succeeds),
+    # github.ref defaults to the repository's default branch, so override it to the branch that
+    # github-release actually ran against, which is carried on workflow_run.head_branch and
+    # contains the version-bump commit that commitizen just pushed.
     - uses: actions/checkout@v5
       with:
         fetch-depth: 0
+        ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_branch || github.ref }}
     - uses: serapeum-org/github-actions/actions/mkdocs-deploy@mkdocs/v1
       with:
         trigger: 'release'
