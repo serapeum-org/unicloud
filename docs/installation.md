@@ -55,18 +55,18 @@ pip install unicloud==0.4.0
 
 ### From Sources
 
-The sources for unicloud can be downloaded from the [GitHub repository](https://github.com/Serapieum-of-alex/unicloud).
+The sources for unicloud can be downloaded from the [GitHub repository](https://github.com/serapeum-org/unicloud).
 
 You can clone the public repository:
 
 ```bash
-git clone https://github.com/Serapieum-of-alex/unicloud.git
+git clone https://github.com/serapeum-org/unicloud.git
 ```
 
-Or download the [tarball](https://github.com/Serapieum-of-alex/unicloud/tarball/main):
+Or download the [tarball](https://github.com/serapeum-org/unicloud/tarball/main):
 
 ```bash
-curl -OJL https://github.com/Serapieum-of-alex/unicloud/tarball/main
+curl -OJL https://github.com/serapeum-org/unicloud/tarball/main
 ```
 
 Once you have a copy of the source, install it with:
@@ -78,13 +78,13 @@ python -m pip install .
 To install directly from GitHub (HEAD of `main`):
 
 ```bash
-pip install git+https://github.com/Serapieum-of-alex/unicloud.git
+pip install git+https://github.com/serapeum-org/unicloud.git
 ```
 
 Or a specific release:
 
 ```bash
-pip install git+https://github.com/Serapieum-of-alex/unicloud.git@0.4.0
+pip install git+https://github.com/serapeum-org/unicloud.git@0.4.0
 ```
 
 ### Development Installation
@@ -92,7 +92,7 @@ pip install git+https://github.com/Serapieum-of-alex/unicloud.git@0.4.0
 If you are planning to contribute, make a git clone and do an editable install so your changes are picked up without reinstalling.
 
 ```bash
-git clone https://github.com/Serapieum-of-alex/unicloud.git
+git clone https://github.com/serapeum-org/unicloud.git
 cd unicloud
 pip install -e ".[all]"
 ```

@@ -5,12 +5,12 @@
 [![Conda Version](https://img.shields.io/conda/vn/conda-forge/unicloud.svg)](https://anaconda.org/conda-forge/unicloud)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Documentation Status](https://readthedocs.org/projects/unicloud/badge/?version=latest)](https://unicloud.readthedocs.io/en/latest/?badge=latest)
-[![codecov](https://codecov.io/gh/Serapieum-of-alex/unicloud/branch/main/graph/badge.svg?token=g0DV4dCa8N)](https://codecov.io/gh/Serapieum-of-alex/unicloud)
+[![codecov](https://codecov.io/gh/serapeum-org/unicloud/branch/main/graph/badge.svg?token=g0DV4dCa8N)](https://codecov.io/gh/serapeum-org/unicloud)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-[![GitHub last commit](https://img.shields.io/github/last-commit/Serapieum-of-alex/unicloud)](https://github.com/Serapieum-of-alex/unicloud/commits/main)
-[![GitHub issues](https://img.shields.io/github/issues/Serapieum-of-alex/unicloud)](https://github.com/Serapieum-of-alex/unicloud/issues)
-[![GitHub stars](https://img.shields.io/github/stars/Serapieum-of-alex/unicloud)](https://github.com/Serapieum-of-alex/unicloud/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/Serapieum-of-alex/unicloud)](https://github.com/Serapieum-of-alex/unicloud/network/members)
+[![GitHub last commit](https://img.shields.io/github/last-commit/serapeum-org/unicloud)](https://github.com/serapeum-org/unicloud/commits/main)
+[![GitHub issues](https://img.shields.io/github/issues/serapeum-org/unicloud)](https://github.com/serapeum-org/unicloud/issues)
+[![GitHub stars](https://img.shields.io/github/stars/serapeum-org/unicloud)](https://github.com/serapeum-org/unicloud/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/serapeum-org/unicloud)](https://github.com/serapeum-org/unicloud/network/members)
 
 ## Overview
 
@@ -55,7 +55,7 @@ pip install unicloud[all]  # both providers
 ### Development version
 
 ```bash
-pip install git+https://github.com/Serapieum-of-alex/unicloud
+pip install git+https://github.com/serapeum-org/unicloud
 ```
 
 ## Main Features
@@ -139,7 +139,7 @@ If you use unicloud in your work, please cite it as:
 
 ```
 Farrag, M. (2024). unicloud: A unified Python API for AWS S3 and Google Cloud Storage.
-https://github.com/Serapieum-of-alex/unicloud
+https://github.com/serapeum-org/unicloud
 ```
 
 BibTeX:
@@ -148,7 +148,7 @@ BibTeX:
 @software{unicloud2024,
   author = {Farrag, Mostafa},
   title  = {unicloud: A unified Python API for AWS S3 and Google Cloud Storage},
-  url    = {https://github.com/Serapieum-of-alex/unicloud},
+  url    = {https://github.com/serapeum-org/unicloud},
   year   = {2024}
 }
 ```
