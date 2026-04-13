@@ -1,6 +1,6 @@
 [project]
 name = "unicloud"
-version = "0.4.0"
+version = "0.4.1"
 description = "cloud storage utils package"
 readme = "README.md"
 license = {text = "GPL-3.0-or-later"}
