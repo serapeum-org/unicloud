@@ -4,7 +4,7 @@
 [![PyPI version](https://badge.fury.io/py/unicloud.svg)](https://badge.fury.io/py/unicloud)
 [![Conda Version](https://img.shields.io/conda/vn/conda-forge/unicloud.svg)](https://anaconda.org/conda-forge/unicloud)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Documentation Status](https://readthedocs.org/projects/unicloud/badge/?version=latest)](https://unicloud.readthedocs.io/en/latest/?badge=latest)
+[![Deploy MkDocs](https://github.com/serapeum-org/unicloud/actions/workflows/github-pages-mkdocs.yml/badge.svg)](https://serapeum-org.github.io/unicloud/)
 [![codecov](https://codecov.io/gh/serapeum-org/unicloud/branch/main/graph/badge.svg?token=g0DV4dCa8N)](https://codecov.io/gh/serapeum-org/unicloud)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![GitHub last commit](https://img.shields.io/github/last-commit/serapeum-org/unicloud)](https://github.com/serapeum-org/unicloud/commits/main)
