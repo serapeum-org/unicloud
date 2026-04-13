@@ -1,4 +1,11 @@
-"""This module contains the secret manager for the unicloud package."""
+"""Small helpers for moving credential payloads through environment variables.
+
+Google Cloud service-account JSON files do not round-trip cleanly through most shells or CI secret
+stores, so unicloud ships :func:`encode` and :func:`decode` — a complementary base64 pair that lets
+you stash the full JSON inside a single environment variable (commonly ``SERVICE_KEY_CONTENT``, which
+:class:`unicloud.google_cloud.gcs.GCS` reads out of ``os.environ``) and decode it back into a dict
+at runtime.
+"""
 
 import base64
 import json
@@ -7,40 +14,45 @@ from typing import Any, Dict, Union
 
 
 def encode(secret_file: Union[str, Any]) -> bytes:
-    """encode.
+    """Encode a service-account payload to a base64 bytestring.
 
-        encode the secret file to base64 string to be used in the environment variable.
-        If the path is True, the secret_file is a path to the service account file.
+    Accepts three equivalent inputs so you can produce the encoded value from whatever form of the
+    service-account JSON you have handy: a file path on disk, an in-memory ``dict``, or a JSON string.
 
-    Parameters
-    ----------
-    secret_file: [str]
-        the secret_file can be the path to the service account file, a JSON string representing the content of the
-        service account file, or a dictionary representing the service account content.
+    Args:
+        secret_file: One of:
 
-    Returns
-    -------
-    byte string
+            - a string path to a service-account JSON file on disk,
+            - a ``dict`` that already contains the parsed service-account content, or
+            - a JSON string containing the same content.
 
-    Examples
-    --------
-    To encode a secret file content:
+    Returns:
+        bytes: The base64-encoded JSON, suitable for storing in an environment variable.
 
-        >>> secret_file_content = {"type": "service_account", "project_id": "your_project_id"}
-        >>> encode(secret_file_content)
-        b'eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogInlvdXJfcHJvamVjdF9pZCJ9'
+    Examples:
+        - Encode an in-memory dict directly:
+            ```python
+            >>> secret_file_content = {"type": "service_account", "project_id": "your_project_id"}
+            >>> encode(secret_file_content)
+            b'eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogInlvdXJfcHJvamVjdF9pZCJ9'
 
-    To encode a secret file using its path:
+            ```
+        - Encode from a JSON string with the same content:
+            ```python
+            >>> secret_file_json = '{"type": "service_account", "project_id": "your_project_id"}'
+            >>> encode(secret_file_json)  # doctest: +SKIP
+            b'eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdF9pZCJ9'
 
-        >>> encode("examples/data/secret-file.json") # doctest: +SKIP
-        b'eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdC1pZCIs******'
+            ```
+        - Encode from a file path on disk:
+            ```python
+            >>> encode("examples/data/secret-file.json")  # doctest: +SKIP
+            b'eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdC1pZCIs******'
 
-    To encode a secret file using a json string representing the content:
+            ```
 
-        >>> secret_file_json = '{"type": "service_account", "project_id": "your_project_id"}'
-        >>> encode(secret_file_json) # doctest: +SKIP
-        b'eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdF9pZCJ9'
-
+    See Also:
+        decode: Inverse operation that turns the base64 payload back into a ``dict``.
     """
     if isinstance(secret_file, str) and os.path.exists(secret_file):
         content: dict = json.load(open(secret_file))
@@ -58,27 +70,29 @@ def encode(secret_file: Union[str, Any]) -> bytes:
 
 
 def decode(string: bytes) -> Dict[str, str]:
-    """decode.
+    """Decode a base64 bytestring back into a service-account ``dict``.
 
-        decode the base64 string to the original secret file content
+    This is the inverse of :func:`encode` — given the bytes that :func:`encode` produced (or the
+    same bytes pulled out of ``os.environ["SERVICE_KEY_CONTENT"]``), return the parsed JSON as a
+    plain dictionary.
 
-    Parameters
-    ----------
-    string: [bytes]
-        the content of the secret file encoded with base64
+    Args:
+        string: The base64-encoded JSON payload, typically read from an environment variable.
 
-    Returns
-    -------
-    Dict[str, str]:
-        google cloud service account content
+    Returns:
+        Dict[str, str]: The decoded service-account content.
 
-    Examples
-    --------
-    To decode a base64 string:
+    Examples:
+        - Round-trip a base64 payload back into a dict:
+            ```python
+            >>> encoded_content = b'eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdF9pZCJ9'
+            >>> decode(encoded_content)
+            {'type': 'service_account', 'project_id': 'example-project_id'}
 
-        >>> encoded_content = b'eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImV4YW1wbGUtcHJvamVjdF9pZCJ9'
-        >>> decode(encoded_content)
-        {'type': 'service_account', 'project_id': 'example-project_id'}
+            ```
+
+    See Also:
+        encode: Produces the base64 bytestring that this function decodes.
     """
     service_key = json.loads(base64.b64decode(string).decode())
     return service_key
